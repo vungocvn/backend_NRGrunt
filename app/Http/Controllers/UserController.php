@@ -30,7 +30,7 @@ class UserController extends Controller
 
     public function getAll(Request $request)
     {
-        $this->authorizeRole('Admin');
+        $this->authorizeRole('CEO');
         $data = $this->userSV->getAll($request);
         if (!$data || empty($data)) {
             throw new APIException(500, "failure!");
@@ -41,7 +41,7 @@ class UserController extends Controller
 
     public function changeRole($id, Request $rq)
     {
-        $this->authorizeRole('Admin');
+        $this->authorizeRole('CEO');
         $roleName = $this->validateField($rq->role, 'role');
 
         $role = $this->userSV->changeRole($id, $roleName);
@@ -50,7 +50,7 @@ class UserController extends Controller
 
     public function changeStatus($id, Request $req)
     {
-        $this->authorizeRole('Admin');
+        $this->authorizeRole('CEO');
         $status = $this->validateField($req->status, 'status');
 
         $this->userSV->changeStatus($id, $status);
@@ -62,7 +62,7 @@ class UserController extends Controller
     {
         $user = $this->getAuth();
 
-        $isAdmin = in_array($user->role, ['Admin']);
+        $isAdmin = in_array($user->role, ['Admin', 'CEO']);
         if ($isAdmin) {
             $this->userSV->activeUser($user->hash_code);
 

@@ -5,16 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Order extends Model
+class Notifi extends Model
 {
     use HasFactory;
 
-    protected $table = 'orders';
+    protected $table = 'notifis';
 
     protected $fillable = [
-        'user_id',
-        'order_code',
-        'status',
-        'total_price',
+        'title',
+        'image_url',
+        'content',
+        'author_name',
     ];
 }

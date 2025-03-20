@@ -15,7 +15,6 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 
 class Controller extends BaseController
 {
@@ -142,7 +141,6 @@ class Controller extends BaseController
     protected function getAuth()
     {
         $user = auth()->user();
-        // throw new AuthException("alo" . strval(auth()->user()));
         if (!$user) {
             throw new AuthException('User not authenticated, please login and try again!');
         }

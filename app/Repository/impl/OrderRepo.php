@@ -3,7 +3,6 @@
 namespace App\Repository\impl;
 
 use App\Exceptions\APIException;
-use App\Exceptions\AuthorizeException;
 use App\Models\Order;
 use App\Repository\BaseRepository;
 use App\Repository\extend\IOrderRepo;
@@ -13,29 +12,17 @@ class OrderRepo extends BaseRepository implements IOrderRepo
 {
     private function findOrder($id = null, $userId = null)
     {
-        if($userId !== null) {
-            $query = Order::where('user_id', $userId);
-        }
-        if ($id !== null) {
-            $data = $query->where('id', $id)->first();
-            if (!$data) {
-                throw new APIException(404, "Order not found or not authorized!");
-            }
-            return $data;
-        }
+        $query = Order::query()
+            ->when($userId !== null, fn($q) => $q->where('user_id', $userId));
 
-        $orders = $query->get();
-        if ($orders->isEmpty()) {
-            throw new APIException(404, "No orders found!");
-        }
-
-        return $orders;
+        return $id
+            ? $query->where('id', $id)->firstOr(fn() => throw new APIException(404, "Order not found!"))
+            : $query->get()->whenEmpty(fn() => throw new APIException(404, "No orders found!"));
     }
-
 
     public function getAll($req)
     {
-        return $this->findOrder(null, $req);
+        return $this->findOrder();
     }
 
     public function findById($id)

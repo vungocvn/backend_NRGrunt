@@ -15,13 +15,13 @@ class ProductService implements IServiceProduct
 
     public function managerAllProducts($reqParam)
     {
-        $reqParam['page_size']  = $reqParam['page_size'] ?? 10;
+        $reqParam['page_size']  = $reqParam['page_size'] ?? 2;
         return $this->productRepo->managerAllProducts($reqParam);
     }
 
     public function getAll($reqParam)
     {
-        $reqParam['page_size']  = $reqParam['page_size'] ?? 10;
+        $reqParam['page_size']  = $reqParam['page_size'] ?? 2;
         return $this->productRepo->getAll($reqParam);
     }
 
@@ -52,4 +52,6 @@ class ProductService implements IServiceProduct
     {
         return $this->productRepo->delete($id);
     }
+
+    
 }

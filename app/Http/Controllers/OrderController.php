@@ -19,11 +19,9 @@ class OrderController extends Controller
     public function getById($id)
     {
         $user = $this->getAuth();
-        // Chỉ Admin mới có quyền xem tất cả đơn hàng
-        if ($this->hasRole(['Admin'])) {
+        if ($this->hasRole(['Admin', 'CEO'])) {
             return $this->returnJson($this->orderService->findById($id), 200, "success!");
         }
-        // Người dùng khác chỉ có thể xem đơn hàng của chính họ
         return $this->returnJson($this->orderService->ownOrder($user->id, $id), 200, "success!");
     }
 
@@ -33,11 +31,10 @@ class OrderController extends Controller
     public function getAll()
     {
         $user = $this->getAuth();
-        // Chỉ Admin mới có quyền xem tất cả đơn hàng
-        if ($this->hasRole(['Admin'])) {
+        if ($this->hasRole(['Admin', 'CEO'])) {
             return $this->returnJson($this->orderService->getAll("any"), 200, "success!");
         }
-        // Người dùng khác chỉ có thể xem các đơn hàng của chính họ
+
         return $this->returnJson($this->orderService->ownOrders($user->id), 200, "success!");
     }
 
@@ -47,6 +44,9 @@ class OrderController extends Controller
     public function create(OrderReq $request)
     {
         $user = $this->getAuth();
+        // if (!$user->status) {
+        //     throw new AuthException("Mày đéo xác thực email mà đòi mua đồ à , đấm chết bà mày giờ!");
+        // }
         $request->merge(['user_id' => $user->id]);
         $data = $request->all();
         return $this->returnJson($this->orderService->create($data), 201, "created successfully!");
@@ -67,8 +67,7 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        // Chỉ Admin mới có quyền xóa đơn hàng
-        $this->authorizeRole(['Admin']);
+        $this->authorizeRole(['Admin', 'CEO']);
         return $this->returnJson($this->orderService->delete($order->id), 204, "success!");
     }
 }
