@@ -15,11 +15,11 @@ class ProductSeed extends Seeder
     {
         // DB::table('categories')->truncate();
         DB::table('products')->insert([
-            ['name' => 'tivi', 'image' => './public/images/electronics.jpg', 'price' => 12000, 'status' => true, 'discount' => 0, 'description' => 'Tivi thì để xem thôi chứ làm gì?', 'created_at' => now(), 'updated_at' => now(), 'category_id' => 1, 'origin' => 'Việt Nam', 'quantity' => 100],
-            ['name' => 'iphone', 'image' => './public/images/electronics.jpg', 'price' => 1009077, 'status' => true, 'discount' => 0, 'description' => 'Chiếc điện thoại mơ ước của hội nhà giàu.', 'created_at' => now(), 'updated_at' => now(), 'category_id' => 3, 'origin' => 'TQ', 'quantity' => 100],
-            ['name' => 'bom nguyên tử', 'image' => './public/images/electronics.jpg', 'price' => 10000, 'status' => false, 'discount' => 0, 'description' => 'Sản phẩm này không được bán trên thị trường 🤫.', 'created_at' => now(), 'updated_at' => now(), 'category_id' => 4, 'origin' => 'Mỹ', 'quantity' => 100],
-            ['name' => 'bom hạt nhân', 'image' => './public/images/electronics.jpg', 'price' => 10000, 'status' => false, 'discount' => 0, 'description' => 'Cùng họ với bom nguyên tử nhưng nâng cấp hơn!', 'created_at' => now(), 'updated_at' => now(), 'category_id' => 2, 'origin' => 'Taiwan', 'quantity' => 100],
-            ['name' => 'xe', 'image' => './public/images/electronics.jpg', 'price' => 10000900, 'status' => true, 'discount' => 0, 'description' => 'Xe dùng để đi chứ làm gì nữa?', 'created_at' => now(), 'updated_at' => now(), 'category_id' => 3, 'origin' => 'Việt Nam', 'quantity' => 100],
+            ['name' => 'Kem dưỡng',  'image' => 'storage/products/electronics.jpg', 'price' => 12000, 'status' => true, 'discount' => 0, 'description' => 'Kem dưỡng cho làn da mịn màng.', 'created_at' => now(), 'updated_at' => now(), 'category_id' => 1, 'origin' => 'Việt Nam', 'quantity' => 100],
+            ['name' => 'Son môi', 'image' => 'storage/products/son-moi.jpg', 'price' => 1009077, 'status' => true, 'discount' => 0, 'description' => 'Chiếc son môi mơ ước của hội nhà giàu.', 'created_at' => now(), 'updated_at' => now(), 'category_id' => 3, 'origin' => 'TQ', 'quantity' => 100],
+            ['name' => 'Sữa rửa mặt', 'image' => 'storage/products/sua-rua-mat.jpg', 'price' => 10000, 'status' => false, 'discount' => 0, 'description' => 'Sản phẩm này không được bán trên thị trường 🤫.', 'created_at' => now(), 'updated_at' => now(), 'category_id' => 4, 'origin' => 'Mỹ', 'quantity' => 100],
+            ['name' => 'Serum', 'image' => 'storage/products/serum.jpg', 'price' => 10000, 'status' => false, 'discount' => 0, 'description' => 'Sản phẩm serum dưỡng da.', 'created_at' => now(), 'updated_at' => now(), 'category_id' => 2, 'origin' => 'Taiwan', 'quantity' => 100],
+            ['name' => 'Dầu dưỡng tóc', 'image' => 'storage/products/dau-duong-toc.jpg', 'price' => 10000900, 'status' => true, 'discount' => 0, 'description' => 'Dầu dưỡng tóc làm mềm tóc.', 'created_at' => now(), 'updated_at' => now(), 'category_id' => 3, 'origin' => 'Việt Nam', 'quantity' => 100],
         ]);
     }
 }

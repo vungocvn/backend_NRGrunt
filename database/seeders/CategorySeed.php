@@ -17,11 +17,11 @@ class CategorySeed extends Seeder
         // DB::table('categories')->truncate();
 
         DB::table('categories')->insert([
-            ['name' => 'Electronics', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Fashion', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Home Appliances', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Books', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Toys', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Sữa rửa mặt', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Kem dưỡng da', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Serum', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Son môi', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Dầu dưỡng tóc', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }

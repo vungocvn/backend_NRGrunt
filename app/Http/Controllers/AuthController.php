@@ -37,7 +37,7 @@ class AuthController extends Controller
         $data = [
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_at' => Carbon::now()->addHours(12)->toDateTimeString(),
+            'expires_at' => Carbon::now()->addHours(48)->toDateTimeString(),
             'role' => $role
         ];
         return $this->returnJson($data, 200, null);
