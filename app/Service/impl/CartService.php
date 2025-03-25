@@ -45,9 +45,9 @@ class CartService  implements IServiceCart
     public function managerOwnCart($id, $idUser)
     {
         $cart = $this->findById($id);
-        if ($cart->user_id != $idUser) {
-            throw new APIException(403, "You don't have permission to access this cart!");
-        }
+        // if ($cart->user_id != $idUser) {
+        //     throw new APIException(403, "You don't have permission to access this cart!");
+        // }
 
         return $cart;
     }
