@@ -27,7 +27,7 @@ class OrderRepo extends BaseRepository implements IOrderRepo
 
     public function findById($id)
     {
-        return $this->findOrder($id, null);
+        return $this->findOrder($id, null)->first();
     }
 
     public function ownOrder($userId, $id)
@@ -56,7 +56,7 @@ class OrderRepo extends BaseRepository implements IOrderRepo
     public function update($id, $data)
     {
         $order = $this->findById($id);
-        if ($data['role'] === 'CEO' || $data['role'] === 'Admin') {
+        if ($data['role'] === 'Admin' || $data['role'] === 'Admin') {
             $order->is_paid = !$order->is_paid;
         } else {
             $order->is_canceled = !$order->is_canceled;
@@ -68,9 +68,6 @@ class OrderRepo extends BaseRepository implements IOrderRepo
     public function delete($id)
     {
         $order = $this->findById($id);
-        if (!$order instanceof Order) {
-            throw new APIException(404, "Order not found or already deleted!");
-        }
         $order->delete();
         return true;
     }

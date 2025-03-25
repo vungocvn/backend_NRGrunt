@@ -20,7 +20,7 @@ class CartController extends Controller
     public function getAll()
     {
         $user = $this->getAuth();
-        if ($user  && $this->hasRole(['Admin', 'CEO'])) {
+        if ($user  && $this->hasRole(['Admin', 'Admin'])) {
             $req = 'hello Admin';
             return $this->returnJson($this->cartSV->getAll($req), 200, "success!");
         } else {
@@ -44,7 +44,7 @@ class CartController extends Controller
     public function getById($id)
     {
         $user = $this->getAuth();
-        if ($user->role === 'Admin' || $user->role === 'CEO') {
+        if ($user->role === 'Admin' || $user->role === 'Admin') {
             $dataCart = $this->cartSV->findById($id);
         } else {
             $dataCart = $this->cartSV->managerOwnCart($id, $user->id);

@@ -889,7 +889,7 @@
                                                                     <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                                                                         &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                                                                         &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                                                                        &nbsp;<em style="font-size:12px">— CEO of that
+                                                                        &nbsp;<em style="font-size:12px">— Admin of that
                                                                             app - GruntDev1204&nbsp;<em>
                                                                                 —&nbsp;</em></em></p>
                                                                 </td>

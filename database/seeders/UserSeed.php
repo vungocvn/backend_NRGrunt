@@ -14,12 +14,12 @@ class UserSeed extends Seeder
     {
         DB::table('users')->insert([
             [
-                'id' => env('USER_CEO_ID'),
-                'hash_code' => env('USER_CEO_UUID'),
+                'id' => env('USER_Admin_ID'),
+                'hash_code' => env('USER_Admin_UUID'),
                 'name' => 'Hồ Trung',
-                'email' => env('USER_CEO_EMAIL'),
-                'avatar' => env('USER_CEO_AVATAR'),
-                'password' => bcrypt(env('USER_CEO_PASSWORD')),
+                'email' => env('USER_Admin_EMAIL'),
+                'avatar' => env('USER_Admin_AVATAR'),
+                'password' => bcrypt(env('USER_Admin_PASSWORD')),
                 'status' => 1,
                 'email_verified_at' => now(),
                 'is_enabled_2fa' => true,

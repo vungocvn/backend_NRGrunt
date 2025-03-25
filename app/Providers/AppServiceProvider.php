@@ -25,6 +25,7 @@ use App\Service\extend\IServiceCart;
 use App\Service\extend\IServiceCategory;
 use App\Service\extend\IServiceDetailOrder;
 use App\Service\extend\IServiceNotifi;
+use App\Service\extend\IServiAdminrder;
 use App\Service\extend\IServiceOrder;
 use App\Service\extend\IServiceSaleReport;
 use App\Service\extend\IServiceUser;

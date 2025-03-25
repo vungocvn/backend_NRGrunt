@@ -47,7 +47,7 @@ class CategoryController extends Controller
      */
     public function create(CategoryReq $request)
     {
-        $this->authorizeRole(['Admin', 'CEO']);
+        $this->authorizeRole(['Admin', 'Admin']);
         $data = $request->all();
         $rs = $this->categorySV->create($data);
         if ($rs) {
@@ -62,7 +62,7 @@ class CategoryController extends Controller
      */
     public function update($id, CategoryReq $request)
     {
-        $this->authorizeRole(['Admin', 'CEO']);
+        $this->authorizeRole(['Admin', 'Admin']);
         $data = $request->all();
         $rs = $this->categorySV->update($id, $data);
         if ($rs) {
@@ -78,7 +78,7 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        $this->authorizeRole(['Admin', 'CEO']);
+        $this->authorizeRole(['Admin', 'Admin']);
         $rs = $this->categorySV->delete($id);
         if ($rs) {
             return $this->returnJson($rs, 200, "success!");

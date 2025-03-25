@@ -10,6 +10,7 @@ use App\Repository\extend\IOrderRepo;
 use App\Repository\extend\IProductRepo;
 use App\Repository\extend\ISaleReportRepo;
 use App\Repository\extend\IUserRepo;
+use App\Service\extend\IServiAdminrder;
 use App\Service\extend\IServiceOrder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;

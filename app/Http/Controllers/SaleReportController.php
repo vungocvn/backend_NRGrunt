@@ -18,7 +18,7 @@ class SaleReportController extends Controller
      */
     public function getAll(Request $request)
     {
-        $this->authorizeRole(['Admin', 'CEO']);
+        $this->authorizeRole(['Admin', 'Admin']);
         return $this->saleReportSv->getAll($request);
     }
 

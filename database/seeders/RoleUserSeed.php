@@ -14,7 +14,7 @@ class RoleUserSeed extends Seeder
     {
         DB::table('role_users')->insert([
             [
-                'user_id' => env('USER_CEO_ID'),
+                'user_id' => env('USER_Admin_ID'),
                 'role_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),

@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\AuthException;
 use App\Http\Requests\OrderReq;
-use App\Models\Order;
 use App\Service\extend\IServiceOrder;
 
 class OrderController extends Controller
@@ -19,7 +17,7 @@ class OrderController extends Controller
     public function getById($id)
     {
         $user = $this->getAuth();
-        if ($this->hasRole(['Admin', 'CEO'])) {
+        if ($this->hasRole(['Admin', 'Admin'])) {
             return $this->returnJson($this->orderService->findById($id), 200, "success!");
         }
         return $this->returnJson($this->orderService->ownOrder($user->id, $id), 200, "success!");
@@ -31,7 +29,7 @@ class OrderController extends Controller
     public function getAll()
     {
         $user = $this->getAuth();
-        if ($this->hasRole(['Admin', 'CEO'])) {
+        if ($this->hasRole(['Admin', 'Admin'])) {
             return $this->returnJson($this->orderService->getAll("any"), 200, "success!");
         }
 
@@ -67,7 +65,7 @@ class OrderController extends Controller
      */
     public function destroy(int $id)
     {
-        $this->authorizeRole(['Admin', 'CEO']);
+        $this->authorizeRole(['Admin', 'Admin']);
         return $this->returnJson($this->orderService->delete($id), 204, "success!");
     }
 }

@@ -28,7 +28,7 @@ class NotifiController extends Controller
      */
     public function create(NotifiReq $req)
     {
-        $this->authorizeRole('CEO');
+        $this->authorizeRole('Admin');
         $data = $req->all();
         $data['author_name'] = $req->is_anonymous ? null : $this->getAuth()->name;
         return $this->returnJson($this->notifiService->create($data), 201, "created success!");

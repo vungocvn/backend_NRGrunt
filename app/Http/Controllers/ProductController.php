@@ -23,7 +23,7 @@ class ProductController extends Controller
         $requestParam = $request->query();
         $user = auth()->user();
 
-        if ($user && ($this->hasRole(['Admin', 'CEO']))) {
+        if ($user && ($this->hasRole(['Admin', 'Admin']))) {
             $dataPage = $this->productSV->managerAllProducts($requestParam);
         } else {
             $dataPage = $this->productSV->getAll($requestParam);
@@ -43,7 +43,7 @@ class ProductController extends Controller
      */
     public function create(ProductReq $request)
     {
-        $this->authorizeRole(['Admin', 'CEO']);
+        $this->authorizeRole(['Admin', 'Admin']);
         $data = $request->all();
 
         $result = $this->productSV->create($data);
@@ -70,7 +70,7 @@ class ProductController extends Controller
 
     public function update($id, ProductReq $request)
     {
-        $this->authorizeRole(['Admin', 'CEO']);
+        $this->authorizeRole(['Admin', 'Admin']);
         $data = $request->all();
         $result = $this->productSV->update($id, $data);
 
@@ -86,7 +86,7 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        $this->authorizeRole(['Admin', 'CEO']);
+        $this->authorizeRole(['Admin', 'Admin']);
         $result = $this->productSV->delete($id);
         if ($result) {
             return $this->returnJson($result, 200, "success!");
@@ -97,7 +97,7 @@ class ProductController extends Controller
 
     public function changeStatus($id)
     {
-        $this->authorizeRole(['Admin', 'CEO']);
+        $this->authorizeRole(['Admin', 'Admin']);
         $result = $this->productSV->changeStatus($id);
         return $this->returnJson($result, 200, "success!");
     }
