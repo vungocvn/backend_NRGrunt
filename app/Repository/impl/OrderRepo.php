@@ -68,6 +68,9 @@ class OrderRepo extends BaseRepository implements IOrderRepo
     public function delete($id)
     {
         $order = $this->findById($id);
+        if (!$order instanceof Order) {
+            throw new APIException(404, "Order not found or already deleted!");
+        }
         $order->delete();
         return true;
     }
