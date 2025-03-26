@@ -6,6 +6,8 @@ use App\Exceptions\APIException;
 use App\Http\Requests\ProductReq;
 use App\Service\extend\IServiceProduct as ExtendIServiceProduct;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
 
 class ProductController extends Controller
 {
@@ -101,4 +103,36 @@ class ProductController extends Controller
         $result = $this->productSV->changeStatus($id);
         return $this->returnJson($result, 200, "success!");
     }
+    public function uploadImage(Request $request)
+    {
+        // Kiểm tra nếu file đã được gửi
+        if (!$request->hasFile('file') || !$request->file('file')->isValid()) {
+            return response()->json(['error' => 'No valid file uploaded'], 400);
+        }
+
+        // Xác định thư mục lưu trữ
+        $directory = storage_path('app/public/images');
+
+        // Kiểm tra nếu thư mục chưa có thì tạo
+        if (!File::exists($directory)) {
+            File::makeDirectory($directory, 0777, true); // 0777 là quyền truy cập cho thư mục
+        }
+
+        // Lấy ảnh từ request và tạo tên ảnh ngẫu nhiên
+        $image = $request->file('file');
+        $imageName = Str::random(10) . '.' . $image->getClientOriginalExtension();
+
+        // Lưu ảnh vào thư mục 'public/images'
+        $path = $image->storeAs('public/images', $imageName);
+
+        // Trả về URL của ảnh đã upload
+        $imageUrl = asset('storage/images/' . $imageName);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Image uploaded successfully!',
+            'filePath' => $imageUrl
+        ]);
+    }
+
 }

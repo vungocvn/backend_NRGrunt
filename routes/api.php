@@ -20,6 +20,7 @@ Route::middleware(['api'])->group(function () {
         Route::delete('/{id}', [App\Http\Controllers\ProductController::class, 'destroy']);
         Route::put('/{id}', [App\Http\Controllers\ProductController::class, 'update']);
         Route::put('/change-status/{id}', [App\Http\Controllers\ProductController::class, 'changeStatus']);
+        Route::post('/upload-image', [App\Http\Controllers\ProductController::class, 'uploadImage']);
     });
 
     Route::prefix('categories')->group(function () {
