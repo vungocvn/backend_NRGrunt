@@ -9,4 +9,5 @@ return [
     // ['Content-Type', 'X-Auth-Token', 'Origin', 'Authorization'],
     'exposed_headers' => [],
     'supports_credentials' => false,
+
 ];
