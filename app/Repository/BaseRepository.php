@@ -6,6 +6,10 @@ class BaseRepository
 {
     protected function paginateQuery($reqParam, $query)
     {
-        return $query->paginate($reqParam['page_size']);
+        $page = $reqParam['page_index'] ?? 1;
+        $pageSize = $reqParam['page_size'] ?? 5;
+
+        return $query->paginate($pageSize, ['*'], 'page', $page);
     }
+
 }
