@@ -48,13 +48,25 @@ class ProductController extends Controller
         $this->authorizeRole(['Admin', 'Admin']);
         $data = $request->all();
 
-        $result = $this->productSV->create($data);
-        if ($result) {
-            return $this->returnJson($result, 200, "created successfully!");
-        } else {
-            throw new APIException(500, "failure!");
+        try {
+            \Log::info('Product Create Request:', $data);
+
+            $result = $this->productSV->create($data);
+
+            if ($result) {
+                return $this->returnJson($result, 200, "created successfully!");
+            } else {
+                throw new APIException(500, "Create failed!");
+            }
+        } catch (\Exception $e) {
+            \Log::error('Create product error: ' . $e->getMessage());
+            return response()->json([
+                'error' => 'Internal Server Error',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
+
 
     /**
      * Store a newly created resource in storage.
