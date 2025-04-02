@@ -148,4 +148,21 @@ class UserController extends Controller
 
         return view('active.active', compact('userName', 'email', 'hash_code', 'avatar'));
     }
+
+    public function getCustomers()
+    {
+        $this->authorizeRole(['Admin', 'Staff']);
+        $users = $this->userSV->getAll(['id', 'name', 'email', 'phone', 'address', 'created_at']);
+        return $this->returnJson($users, 200, 'Fetched customers successfully!');
+    }
+
+    public function getCustomerById($id)
+    {
+        $this->authorizeRole(['Admin', 'Staff']);
+        $user = $this->userSV->findById($id);
+        if (!$user) {
+            throw new APIException(404, 'User not found');
+        }
+        return $this->returnJson($user, 200, 'Fetched customer successfully!');
+    }
 }

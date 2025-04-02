@@ -42,9 +42,6 @@ class OrderController extends Controller
     public function create(OrderReq $request)
     {
         $user = $this->getAuth();
-        // if (!$user->status) {
-        //     throw new AuthException("Mày đéo xác thực email mà đòi mua đồ à , đấm chết bà mày giờ!");
-        // }
         $request->merge(['user_id' => $user->id]);
         $data = $request->all();
         return $this->returnJson($this->orderService->create($data), 201, "created successfully!");

@@ -88,7 +88,15 @@ class OrderService implements IServiceOrder
     {
         return DB::transaction(function () use ($data) {
             $dataCart = $this->cartRepo->managerOwnCartsById($data['user_id'], $data['cart_ids']);
-            $data['total_price'] = $this->getTotalPrice($dataCart);
+            $totalPrice = $this->getTotalPrice($dataCart);
+            $vat = $totalPrice * 0.05;
+            $shippingFee = 50000;
+            $finalTotal = $totalPrice + $vat + $shippingFee;
+
+            $data['total_price'] = $totalPrice;
+            $data['vat'] = $vat;
+            $data['shipping_fee'] = $shippingFee;
+            $data['final_total'] = $finalTotal;
 
             $rs = $this->orderRepo->create($data);
             if ($rs == null) {
@@ -119,7 +127,6 @@ class OrderService implements IServiceOrder
         }
         return $rs;
     }
-
 
     public function ownOrder($userId, $id)
     {

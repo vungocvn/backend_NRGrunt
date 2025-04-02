@@ -42,16 +42,21 @@ class OrderRepo extends BaseRepository implements IOrderRepo
     }
 
     public function create($data)
-    {
-        return Order::create([
-            'order_code' => Str::uuid(),
-            'user_id' => $data['user_id'],
-            'cart_ids' => $data['cart_ids'],
-            'total_price' => $data['total_price'],
-            'is_paid' => $data['is_paid'] ?? false,
-            'is_canceled' => $data['is_canceled'] ?? false
-        ]);
-    }
+{
+    return Order::create([
+        'order_code' => Str::uuid(),
+        'user_id' => $data['user_id'],
+        'cart_ids' => json_encode($data['cart_ids']), // ✅ Thêm dòng này
+        'total_price' => $data['total_price'],
+        'vat' => $data['vat'],
+        'shipping_fee' => $data['shipping_fee'],
+        'final_total' => $data['final_total'],
+        'is_paid' => $data['is_paid'] ?? false,
+        'is_canceled' => $data['is_canceled'] ?? false
+    ]);
+}
+
+
 
     public function update($id, $data)
     {

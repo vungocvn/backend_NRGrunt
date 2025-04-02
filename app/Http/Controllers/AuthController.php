@@ -59,7 +59,19 @@ class AuthController extends Controller
             Mail::to($user->email)->queue(new RequestLogin2FA($user->name, $otp['expires_at'], $otp['otp']));
             return $this->returnJson(null, 202, "email sent successfully , please check your email address and continue!");
         } else {
-            return $this->respondWithToken($this->validateRoleName($role, $authReq->email), $token);
+            return response()->json([
+                'status' => 200,
+                'message' => 'login success',
+                'data' => [
+                    'access_token' => $token,
+                    'token_type' => 'bearer',
+                    'expires_at' => Carbon::now()->addHours(48)->toDateTimeString(),
+                    'role' => $this->validateRoleName($role, $authReq->email),
+                    'id' => $user->id,
+                    'email' => $user->email,
+                    'name' => $user->name,
+                ]
+            ], 200);
         }
     }
 
@@ -167,11 +179,23 @@ class AuthController extends Controller
 
     public function logout()
     {
-        if ($this->getAuth()) {
-            auth()->logout();
-            return response()->json([], 204);
+        $user = $this->getAuth(false);
+
+        if (!$user) {
+            return response()->json([
+                'authFail' => true,
+                'error' => 'User not authenticated, please login and try again!',
+                'status' => 200
+            ], 200);
         }
+
+        auth()->logout();
+
+        return response()->json([
+            'message' => 'Đăng xuất thành công'
+        ], 200);
     }
+
 
     public function refresh()
     {

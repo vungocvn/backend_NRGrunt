@@ -138,16 +138,18 @@ class Controller extends BaseController
         DB::table('manager_tokens')->where('token', $rs->token)->where('type', $rs->type)->delete();
     }
 
-    protected function getAuth()
+    protected function getAuth($throwException = true)
     {
         $user = auth()->user();
-        if (!$user) {
+        if (!$user && $throwException) {
             throw new AuthException('User not authenticated, please login and try again!');
         }
 
-        $this->checkIsBlocked($user->email);
-        $role = $this->getUserRole($user->id);
-        $user->role = $role;
+        if ($throwException) {
+            $this->checkIsBlocked($user->email);
+            $role = $this->getUserRole($user->id);
+            $user->role = $role;
+        }
 
         return $user;
     }

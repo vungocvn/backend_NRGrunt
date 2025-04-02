@@ -106,6 +106,8 @@ class UserRepo implements IUserRepo
         $dataUpdate->update([
             'name' => $data['name'],
             'avatar' => $data['avatar'],
+            'phone'   => $data['phone'] ?? $dataUpdate->phone,
+            'address' => $data['address'] ?? $dataUpdate->address
         ]);
 
         return $dataUpdate;

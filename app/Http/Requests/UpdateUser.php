@@ -23,8 +23,11 @@ class UpdateUser extends FormRequest
     {
         return [
             'name' => 'required|max:100',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:255',
         ];
     }
+
 
     public function messages()
     {
@@ -40,7 +43,10 @@ class UpdateUser extends FormRequest
     public function attributes()
     {
         return [
-            'name'   => 'tên người dùng',
+            'name'    => 'tên người dùng',
+            'phone'   => 'số điện thoại',
+            'address' => 'địa chỉ',
         ];
     }
+
 }
