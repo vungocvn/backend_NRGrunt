@@ -1,13 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Role;
 use App\Exceptions\APIException;
 use App\Http\Requests\UpdateUser;
 use App\Http\Requests\UserReq;
 use App\Mail\ActiveUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use App\Models\User;
 
 class UserController extends Controller
 {
@@ -156,6 +158,13 @@ class UserController extends Controller
         return $this->returnJson($users, 200, 'Fetched customers successfully!');
     }
 
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+        return response()->json(['message' => 'User deleted successfully']);
+    }
+
     public function getCustomerById($id)
     {
         $this->authorizeRole(['Admin', 'Staff']);
@@ -164,5 +173,66 @@ class UserController extends Controller
             throw new APIException(404, 'User not found');
         }
         return $this->returnJson($user, 200, 'Fetched customer successfully!');
+    }
+
+    public function updateUser(Request $request, $id)
+    {
+        $this->authorizeRole('Admin');
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'role' => 'required|string',
+            'password' => 'nullable|string|min:6',
+        ]);
+
+        $user = User::findOrFail($id);
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+
+        if ($request->filled('password')) {
+            $user->password = \Hash::make($request->password);
+        }
+
+        $user->save();
+
+        // 💡 Gán lại role (xóa cũ - gán mới)
+        $role = Role::where('name', $request->role)->first();
+        if ($role) {
+            $user->roles()->sync([$role->id]); // Gán 1 role, nếu bạn muốn đa role thì thêm nhiều ID vào array
+        }
+
+        return response()->json([
+            'message' => 'User updated successfully',
+            'user' => $user->load('roles'),
+        ]);
+    {
+        $this->authorizeRole('Admin');
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'role' => 'required|string',
+            'password' => 'nullable|string|min:6',
+        ]);
+
+        $user = User::findOrFail($id);
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->role = $request->role;
+
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
+
+        return response()->json([
+            'message' => 'User updated successfully',
+            'user' => $user,
+        ]);
+      }
     }
 }

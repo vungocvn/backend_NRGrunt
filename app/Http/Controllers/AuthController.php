@@ -148,13 +148,17 @@ class AuthController extends Controller
         if (!$user) {
             throw new APIException(404, "user by this email not found!");
         }
+
         $this->verifyOTP($request->query('token'), $request->otp, 'repassword');
         $user->password = bcrypt($request->new_password);
         $user->save();
 
         $this->deleteOTP($request->query('token'), 'repassword');
-        return $this->returnJson(null, 201, "your password has been reset! please re-login");
+
+        // ✅ Thêm dòng dưới để redirect sau khi đổi mật khẩu thành công
+        return redirect('/login')->with('success', 'Đổi mật khẩu thành công! Vui lòng đăng nhập lại.');
     }
+
 
     public function changePassword(UpdateAuthReq $authReq)
     {
