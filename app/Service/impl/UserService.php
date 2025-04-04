@@ -77,19 +77,19 @@ class UserService implements IServiceUser
         return $this->userRepo->create($data);
     }
     public function update($id, $data)
-{
-    $user = $this->userRepo->findById($id);
+    {
+        $user = $this->userRepo->findById($id);
 
-    // Nếu không truyền avatar => giữ nguyên
-    if (!isset($data['avatar']) || $data['avatar'] === "") {
-        $data['avatar'] = $user->avatar ?? "https://firebasestorage.googleapis.com/v0/b/hotrung1204-36f50.appspot.com/o/Ngoc_Red%2Fdf.jpg?alt=media&token=813909dc-52e3-43d2-b2cd-51c1b912c44e";
+        // Nếu không truyền avatar => giữ nguyên
+        if (!isset($data['avatar']) || $data['avatar'] === "") {
+            $data['avatar'] = $user->avatar ?? "https://firebasestorage.googleapis.com/v0/b/hotrung1204-36f50.appspot.com/o/Ngoc_Red%2Fdf.jpg?alt=media&token=813909dc-52e3-43d2-b2cd-51c1b912c44e";
+        }
+
+        // Kiểm tra xem có phone và address không
+        \Log::info("Cập nhật user: ", $data);
+
+        return $this->userRepo->update($id, $data);
     }
-
-    // Kiểm tra xem có phone và address không
-    \Log::info("Cập nhật user: ", $data);
-
-    return $this->userRepo->update($id, $data);
-}
 
 
     public function delete($id)

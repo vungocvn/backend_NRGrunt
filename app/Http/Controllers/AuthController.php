@@ -43,6 +43,7 @@ class AuthController extends Controller
         return $this->returnJson($data, 200, null);
     }
 
+
     public function login(AuthReq $authReq)
     {
         $role = $authReq->role;

@@ -25,9 +25,9 @@ class CartService  implements IServiceCart
             throw new APIException(422, "Product is not available now!");
         }
 
-        if ($product->quantity < $dataCart['quantity']) {
-            throw new APIException(400, "Not enough stock available!");
-        }
+        // if ($product->quantity < $dataCart['quantity']) {
+        //     throw new APIException(400, "Not enough stock available!");
+        // }
 
         return $product;
     }

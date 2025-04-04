@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\OrderReq;
 use App\Service\extend\IServiceOrder;
-
+use Illuminate\Http\Request;
 class OrderController extends Controller
 {
     private $orderService;
@@ -26,15 +26,16 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function getAll()
+    public function getAll(Request $request)
     {
         $user = $this->getAuth();
         if ($this->hasRole(['Admin', 'Admin'])) {
-            return $this->returnJson($this->orderService->getAll("any"), 200, "success!");
+            return $this->returnJson($this->orderService->getAll($request->all()), 200, "success!");
         }
 
         return $this->returnJson($this->orderService->ownOrders($user->id), 200, "success!");
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -50,16 +51,13 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update($id)
+    public function update(Request $request, $id)
     {
         $user = $this->getAuth();
+        $data = $request->all();
         $data['role'] = $user->role;
         return $this->returnJson($this->orderService->update($id, $data), 200, "change status successfully!");
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(int $id)
     {
         $this->authorizeRole(['Admin', 'Admin']);

@@ -10,10 +10,11 @@ use Illuminate\Support\Str;
 
 class OrderRepo extends BaseRepository implements IOrderRepo
 {
-    private function findOrder($id = null, $userId = null)
+    private function findOrder($id = null, $userId = null, $filters = [])
     {
         $query = Order::query()
-            ->when($userId !== null, fn($q) => $q->where('user_id', $userId));
+            ->when($userId !== null, fn($q) => $q->where('user_id', $userId))
+            ->when(isset($filters['is_paid']), fn($q) => $q->where('is_paid', $filters['is_paid']));
 
         return $id
             ? $query->where('id', $id)->firstOr(fn() => throw new APIException(404, "Order not found!"))
@@ -22,18 +23,17 @@ class OrderRepo extends BaseRepository implements IOrderRepo
 
     public function getAll($req)
     {
-        return $this->findOrder();
+        return $this->findOrder(null, null, $req);
     }
 
     public function findById($id)
     {
-        return $this->findOrder($id, null)->first();
+        return $this->findOrder($id, null);
     }
 
     public function ownOrder($userId, $id)
     {
-        $order = $this->findOrder($id, $userId);
-        return $order;
+        return $this->findOrder($id, $userId);
     }
 
     public function ownOrders($userId)
@@ -42,30 +42,32 @@ class OrderRepo extends BaseRepository implements IOrderRepo
     }
 
     public function create($data)
-{
-    return Order::create([
-        'order_code' => Str::uuid(),
-        'user_id' => $data['user_id'],
-        'cart_ids' => json_encode($data['cart_ids']), // ✅ Thêm dòng này
-        'total_price' => $data['total_price'],
-        'vat' => $data['vat'],
-        'shipping_fee' => $data['shipping_fee'],
-        'final_total' => $data['final_total'],
-        'is_paid' => $data['is_paid'] ?? false,
-        'is_canceled' => $data['is_canceled'] ?? false
-    ]);
-}
-
-
+    {
+        return Order::create([
+            'order_code' => Str::uuid(),
+            'user_id' => $data['user_id'],
+            'cart_ids' => json_encode($data['cart_ids']),
+            'total_price' => $data['total_price'],
+            'vat' => $data['vat'],
+            'shipping_fee' => $data['shipping_fee'],
+            'final_total' => $data['final_total'],
+            'is_paid' => $data['is_paid'] ?? false,
+            'is_canceled' => $data['is_canceled'] ?? false,
+        ]);
+    }
 
     public function update($id, $data)
     {
         $order = $this->findById($id);
-        if ($data['role'] === 'Admin' || $data['role'] === 'Admin') {
-            $order->is_paid = !$order->is_paid;
+
+        if (isset($data['role']) && $data['role'] === 'Admin') {
+            if (isset($data['is_paid'])) {
+                $order->is_paid = $data['is_paid'];
+            }
         } else {
             $order->is_canceled = !$order->is_canceled;
         }
+
         $order->save();
         return $order;
     }

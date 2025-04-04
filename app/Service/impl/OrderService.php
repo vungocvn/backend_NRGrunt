@@ -76,8 +76,25 @@ class OrderService implements IServiceOrder
 
     public function getAll($req)
     {
-        return $this->orderRepo->getAll($req);
+        $orders = $this->orderRepo->getAll($req);
+
+        foreach ($orders as $order) {
+            $details = $this->detailOrderRepo->getAll(['order_id' => $order->id]);
+
+            $productNames = [];
+            foreach ($details as $detail) {
+                $product = $this->productRepo->findById($detail->product_id);
+                if ($product) {
+                    $productNames[] = $product->name;
+                }
+            }
+
+            $order->product_names = implode(', ', $productNames);
+        }
+
+        return $orders;
     }
+
 
     public function findById($id)
     {
@@ -120,13 +137,22 @@ class OrderService implements IServiceOrder
 
     public function update($id, $data)
     {
-        $rs =  $this->orderRepo->update($id, $data);
-        if ($rs->is_paid) {
-            $dataDetailOrder = $this->detailOrderRepo->getAll(['order_id' => $rs->id]);
-            $this->syncDataSR($dataDetailOrder);
+        $order = $this->findById($id);
+
+        // Chỉ cập nhật nếu có key 'is_paid' gửi lên từ FE
+        if (array_key_exists('is_paid', $data)) {
+            $order->is_paid = $data['is_paid'];
         }
-        return $rs;
+
+        // Nếu là client → chỉ được cập nhật is_canceled
+        if (array_key_exists('is_canceled', $data)) {
+            $order->is_canceled = $data['is_canceled'];
+        }
+
+        $order->save();
+        return $order;
     }
+
 
     public function ownOrder($userId, $id)
     {

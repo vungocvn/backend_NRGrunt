@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Exceptions\AuthorizeException;
 use App\Models\Role;
 use App\Exceptions\APIException;
 use App\Http\Requests\UpdateUser;
@@ -153,7 +154,7 @@ class UserController extends Controller
 
     public function getCustomers()
     {
-        $this->authorizeRole(['Admin', 'Staff']);
+        $this->authorizeRole(['Admin', 'Customer']);
         $users = $this->userSV->getAll(['id', 'name', 'email', 'phone', 'address', 'created_at']);
         return $this->returnJson($users, 200, 'Fetched customers successfully!');
     }
@@ -167,7 +168,7 @@ class UserController extends Controller
 
     public function getCustomerById($id)
     {
-        $this->authorizeRole(['Admin', 'Staff']);
+        $this->authorizeRole(['Admin', 'Customer']);
         $user = $this->userSV->findById($id);
         if (!$user) {
             throw new APIException(404, 'User not found');
@@ -177,19 +178,22 @@ class UserController extends Controller
 
     public function updateUser(Request $request, $id)
     {
-        $this->authorizeRole('Admin');
+        $this->authorizeRole(["Admin", "Customer"]);
+
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email',
-            'role' => 'required|string',
+            'email' => 'nullable|email',
             'password' => 'nullable|string|min:6',
         ]);
 
-        $user = User::findOrFail($id);
+        $temp = auth()->user();
+        $user = User::findOrFail($temp->id);
 
         $user->name = $request->name;
-        $user->email = $request->email;
+        $user->email = $request->email ?? $user->email;
+        $user->phone = $request->phone ?? $user->phone;
+        $user->address = $request->address ?? $user->address;
 
         if ($request->filled('password')) {
             $user->password = \Hash::make($request->password);
@@ -197,10 +201,9 @@ class UserController extends Controller
 
         $user->save();
 
-        // 💡 Gán lại role (xóa cũ - gán mới)
         $role = Role::where('name', $request->role)->first();
         if ($role) {
-            $user->roles()->sync([$role->id]); // Gán 1 role, nếu bạn muốn đa role thì thêm nhiều ID vào array
+            $user->roles()->sync([$role->id]);
         }
 
         return response()->json([
@@ -208,20 +211,24 @@ class UserController extends Controller
             'user' => $user->load('roles'),
         ]);
     {
-        $this->authorizeRole('Admin');
+        $this->authorizeRole(["Admin", "Customer"]);
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email',
-            'role' => 'required|string',
+            'email' => 'nullable|email',
+            'phone' => 'nullable|string',
+            'address' => 'nullable|string',
             'password' => 'nullable|string|min:6',
+
         ]);
 
-        $user = User::findOrFail($id);
+        $temp = auth()->user();
+        $user = User::findOrFail($temp->id);
 
         $user->name = $request->name;
-        $user->email = $request->email;
-        $user->role = $request->role;
+        $user->email = $request->email ?? $user->email;
+        $user->phone = $request->phone ?? $user->phone;
+        $user->address = $request->address ?? $user->address;
 
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
@@ -235,4 +242,5 @@ class UserController extends Controller
         ]);
       }
     }
+
 }
