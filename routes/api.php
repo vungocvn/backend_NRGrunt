@@ -85,8 +85,9 @@ Route::middleware(['api'])->group(function () {
         Route::get('/', [App\Http\Controllers\UserController::class, 'getAll']);
         Route::post('/register', [App\Http\Controllers\UserController::class, 'signup']);
         Route::delete('/{id}', [App\Http\Controllers\UserController::class, 'destroy']);
-        Route::put('/{id}', [App\Http\Controllers\UserController::class, 'updateUser']);
         Route::put('/profile', [App\Http\Controllers\UserController::class, 'updateProfile']);
+        Route::put('/{id}', [App\Http\Controllers\UserController::class, 'updateUser']);
+
 
         Route::group([
             'prefix' => 'active'
@@ -112,9 +113,7 @@ Route::middleware(['api'])->group(function () {
             Route::put('/{id}/status', [App\Http\Controllers\UserController::class, 'changeStatus']);
         });
     });
-   // routes/api.php
-Route::post('/client/forgot-password', [ClientController::class, 'forgotPassword']);
-Route::post('/client/reset-password', [ClientController::class, 'resetPassword']);
-
-
+    // routes/api.php
+    Route::post('/client/forgot-password', [ClientController::class, 'forgotPassword']);
+    Route::post('/client/reset-password', [ClientController::class, 'resetPassword']);
 });

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Exceptions\AuthorizeException;
 use App\Models\Role;
 use App\Exceptions\APIException;
@@ -178,17 +179,18 @@ class UserController extends Controller
 
     public function updateUser(Request $request, $id)
     {
-        $this->authorizeRole(["Admin", "Customer"]);
-
+        $this->authorizeRole(["Admin"]);
 
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'nullable|email',
             'password' => 'nullable|string|min:6',
+            'phone' => 'nullable|string',
+            'address' => 'nullable|string',
+            'role' => 'nullable|string',
         ]);
 
-        $temp = auth()->user();
-        $user = User::findOrFail($temp->id);
+        $user = User::findOrFail($id);
 
         $user->name = $request->name;
         $user->email = $request->email ?? $user->email;
@@ -201,46 +203,17 @@ class UserController extends Controller
 
         $user->save();
 
-        $role = Role::where('name', $request->role)->first();
-        if ($role) {
-            $user->roles()->sync([$role->id]);
+        if ($request->filled('role')) {
+            $role = Role::where('name', $request->role)->first();
+            if ($role) {
+                $user->roles()->sync([$role->id]);
+            }
         }
 
         return response()->json([
             'message' => 'User updated successfully',
             'user' => $user->load('roles'),
         ]);
-    {
-        $this->authorizeRole(["Admin", "Customer"]);
-
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email',
-            'phone' => 'nullable|string',
-            'address' => 'nullable|string',
-            'password' => 'nullable|string|min:6',
-
-        ]);
-
-        $temp = auth()->user();
-        $user = User::findOrFail($temp->id);
-
-        $user->name = $request->name;
-        $user->email = $request->email ?? $user->email;
-        $user->phone = $request->phone ?? $user->phone;
-        $user->address = $request->address ?? $user->address;
-
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
-        }
-
-        $user->save();
-
-        return response()->json([
-            'message' => 'User updated successfully',
-            'user' => $user,
-        ]);
-      }
     }
 
 }

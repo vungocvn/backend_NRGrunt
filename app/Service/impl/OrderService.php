@@ -75,25 +75,42 @@ class OrderService implements IServiceOrder
     }
 
     public function getAll($req)
-    {
-        $orders = $this->orderRepo->getAll($req);
+{
+    $orders = $this->orderRepo->getAll($req);
 
-        foreach ($orders as $order) {
-            $details = $this->detailOrderRepo->getAll(['order_id' => $order->id]);
+    foreach ($orders as $order) {
+        // Lấy chi tiết sản phẩm
+        $details = $this->detailOrderRepo->getAll(['order_id' => $order->id]);
 
-            $productNames = [];
-            foreach ($details as $detail) {
-                $product = $this->productRepo->findById($detail->product_id);
-                if ($product) {
-                    $productNames[] = $product->name;
-                }
+        $productNames = [];
+        $totalQuantity = 0;
+
+        foreach ($details as $detail) {
+            $product = $this->productRepo->findById($detail->product_id);
+            if ($product) {
+                $productNames[] = $product->name;
             }
-
-            $order->product_names = implode(', ', $productNames);
+            $totalQuantity += $detail->quantity; // 👉 cộng dồn số lượng
         }
 
-        return $orders;
+        $order->product_names = $productNames;
+        $order->total_quantity = $totalQuantity; // 👈 gán số lượng vào order
+
+        // Thêm thông tin khách
+        $user = $this->userRepo->findById($order->user_id);
+        if ($user) {
+            $order->customer_info = [
+                'name' => $user->name,
+                'phone' => $user->phone,
+                'address' => $user->address,
+            ];
+        }
     }
+
+    return $orders;
+}
+
+
 
 
     public function findById($id)
