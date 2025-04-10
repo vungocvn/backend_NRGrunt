@@ -24,7 +24,7 @@ class UserRepo implements IUserRepo
         if (!$roleUser) {
             RoleUser::create([
                 'user_id' => $user->id,
-                'role_id' => 3,
+                'role_id' => 2,
             ]);
         }
     }
@@ -55,7 +55,7 @@ class UserRepo implements IUserRepo
         $user = $this->findById($id);
         $user->status = $valueStatus;
         if ($user->status === 2) {
-            $this->changeRole($id, 3);
+            $this->changeRole($id, 2);
         }
         $user->save();
         return $user;
