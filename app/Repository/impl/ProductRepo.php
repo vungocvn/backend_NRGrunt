@@ -13,7 +13,10 @@ class ProductRepo extends BaseRepository implements IProductRepo
     {
         if (!empty($reqParam['name'])) {
             $query->where('name', 'like', '%' . trim($reqParam['name']) . '%');
+        } elseif (!empty($reqParam['keyword'])) {
+            $query->where('name', 'like', '%' . trim($reqParam['keyword']) . '%');
         }
+
 
         if (!empty($reqParam['origin'])) {
             $query->where('origin', 'like', '%' . trim($reqParam['origin']) . '%');
