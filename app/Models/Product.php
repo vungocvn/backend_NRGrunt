@@ -23,4 +23,9 @@ class Product extends Model
         'discount',
         'description',
     ];
+    public function detailOrders()
+{
+    return $this->hasMany(DetailOrder::class, 'product_id');
+}
+
 }

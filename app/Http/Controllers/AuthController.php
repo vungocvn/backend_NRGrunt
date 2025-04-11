@@ -156,9 +156,12 @@ class AuthController extends Controller
 
         $this->deleteOTP($request->query('token'), 'repassword');
 
-        // ✅ Thêm dòng dưới để redirect sau khi đổi mật khẩu thành công
-        return redirect('/login')->with('success', 'Đổi mật khẩu thành công! Vui lòng đăng nhập lại.');
+        return response()->json([
+            'status' => 200,
+            'message' => 'Mật khẩu đã được thay đổi thành công. Vui lòng đăng nhập lại.'
+        ]);
     }
+
 
 
     public function changePassword(UpdateAuthReq $authReq)

@@ -2,6 +2,7 @@
 
 namespace App\Repository\impl;
 
+use App\Models\Order;
 use App\Models\SaleReport;
 use App\Repository\BaseRepository;
 use App\Repository\extend\ISaleReportRepo;
@@ -10,7 +11,14 @@ class SaleReportRepo extends BaseRepository implements ISaleReportRepo
 {
     public function getAll($reqParam)
     {
-        return SaleReport::all();
+        $revenue = Order::sum('total_price');
+        $orderCount = Order::count();
+
+        return response()->json([
+            'status' => 200,
+            'total_revenue' => $revenue,
+            'total_orders' => $orderCount
+        ]);
     }
 
     public function findById($id) {}

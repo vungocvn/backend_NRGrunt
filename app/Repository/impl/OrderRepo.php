@@ -23,8 +23,19 @@ class OrderRepo extends BaseRepository implements IOrderRepo
 
     public function getAll($req)
     {
-        return $this->findOrder(null, null, $req);
+        $query = Order::query();
+
+        if (isset($req['is_paid'])) {
+            $query->where('is_paid', $req['is_paid']);
+        }
+
+        if (isset($req['is_canceled'])) {
+            $query->where('is_canceled', $req['is_canceled']);
+        }
+
+        return $query->orderBy('created_at', 'desc')->get();
     }
+
 
     public function findById($id)
     {

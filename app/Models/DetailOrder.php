@@ -17,4 +17,9 @@ class DetailOrder extends Model
         'quantity',
         'unit_price',
     ];
+    public function product()
+{
+    return $this->belongsTo(Product::class, 'product_id');
+}
+
 }

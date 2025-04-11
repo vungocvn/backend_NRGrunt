@@ -23,6 +23,18 @@ class Order extends Model
         'is_paid',
         'is_canceled',
     ];
+    public function orderDetails()
+    {
+        return $this->hasMany(DetailOrder::class, 'order_id');
+    }
+    const STATUS_TEXT = [
+        0 => 'Xác nhận đơn',
+        1 => 'Đã hoàn thành',
+        2 => 'Đã hủy',
+    ];
 
-
+    public function getStatusTextAttribute()
+    {
+        return self::STATUS_TEXT[$this->status] ?? 'Không xác định';
+    }
 }

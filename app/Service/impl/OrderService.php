@@ -153,22 +153,25 @@ class OrderService implements IServiceOrder
     }
 
     public function update($id, $data)
-    {
-        $order = $this->findById($id);
+{
+    $order = $this->findById($id);
 
-        // Chỉ cập nhật nếu có key 'is_paid' gửi lên từ FE
-        if (array_key_exists('is_paid', $data)) {
-            $order->is_paid = $data['is_paid'];
-        }
-
-        // Nếu là client → chỉ được cập nhật is_canceled
-        if (array_key_exists('is_canceled', $data)) {
-            $order->is_canceled = $data['is_canceled'];
-        }
-
-        $order->save();
-        return $order;
+    if (array_key_exists('is_paid', $data)) {
+        $order->is_paid = $data['is_paid'];
     }
+
+    if (array_key_exists('is_canceled', $data)) {
+        $order->is_canceled = $data['is_canceled'];
+    }
+
+    if (array_key_exists('status', $data)) {
+        $order->status = $data['status'];
+    }
+
+    $order->save();
+    return $order;
+}
+
 
 
     public function ownOrder($userId, $id)

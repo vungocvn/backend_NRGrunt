@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\OrderReq;
 use App\Service\extend\IServiceOrder;
 use Illuminate\Http\Request;
+use App\Models\Order;
 class OrderController extends Controller
 {
     private $orderService;
@@ -63,4 +64,15 @@ class OrderController extends Controller
         $this->authorizeRole(['Admin', 'Admin']);
         return $this->returnJson($this->orderService->delete($id), 204, "success!");
     }
+    public function getMyOrders(Request $request)
+{
+    $user = $this->getAuth();
+
+    $orders = Order::with('orderDetails.product')
+        ->where('user_id', $user->id)
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+    return response()->json($orders);
+}
 }
