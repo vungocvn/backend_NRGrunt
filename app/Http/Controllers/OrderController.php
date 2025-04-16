@@ -18,11 +18,20 @@ class OrderController extends Controller
     public function getById($id)
     {
         $user = $this->getAuth();
+
         if ($this->hasRole(['Admin', 'Admin'])) {
-            return $this->returnJson($this->orderService->findById($id), 200, "success!");
+            $order = $this->orderService->findById($id);
+        } else {
+            $order = $this->orderService->ownOrder($user->id, $id);
         }
-        return $this->returnJson($this->orderService->ownOrder($user->id, $id), 200, "success!");
+
+        if ($order) {
+            $order->load('user');
+        }
+
+        return $this->returnJson($order, 200, "success!");
     }
+
 
     /**
      * Display the specified resource.
@@ -65,14 +74,17 @@ class OrderController extends Controller
         return $this->returnJson($this->orderService->delete($id), 204, "success!");
     }
     public function getMyOrders(Request $request)
-{
-    $user = $this->getAuth();
+    {
+        $user = $this->getAuth();
 
-    $orders = Order::with('orderDetails.product')
-        ->where('user_id', $user->id)
-        ->orderBy('created_at', 'desc')
-        ->get();
+        $orders = Order::with(['orderDetails.product', 'user']) // 👈 include quan hệ user
+            ->where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-    return response()->json($orders);
-}
+        return response()->json([
+            'status' => 200,
+            'data' => $orders,
+        ]);
+    }
 }

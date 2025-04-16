@@ -37,4 +37,9 @@ class Order extends Model
     {
         return self::STATUS_TEXT[$this->status] ?? 'Không xác định';
     }
+    public function user()
+{
+    return $this->belongsTo(User::class, 'user_id');
+}
+
 }
