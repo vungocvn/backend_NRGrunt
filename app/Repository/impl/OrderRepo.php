@@ -64,8 +64,14 @@ class OrderRepo extends BaseRepository implements IOrderRepo
             'final_total' => $data['final_total'],
             'is_paid' => $data['is_paid'] ?? false,
             'is_canceled' => $data['is_canceled'] ?? false,
+
+            // 🔥 Thêm 3 dòng này
+            'receiver_name' => $data['receiver_name'] ?? null,
+            'receiver_phone' => $data['receiver_phone'] ?? null,
+            'receiver_address' => $data['receiver_address'] ?? null,
         ]);
     }
+
 
     public function update($id, $data)
     {
@@ -75,6 +81,16 @@ class OrderRepo extends BaseRepository implements IOrderRepo
             if (isset($data['is_paid'])) {
                 $order->is_paid = $data['is_paid'];
             }
+
+            if (isset($data['receiver_name'])) {
+                $order->receiver_name = $data['receiver_name'];
+            }
+            if (isset($data['receiver_phone'])) {
+                $order->receiver_phone = $data['receiver_phone'];
+            }
+            if (isset($data['receiver_address'])) {
+                $order->receiver_address = $data['receiver_address'];
+            }
         } else {
             $order->is_canceled = !$order->is_canceled;
         }
@@ -82,6 +98,7 @@ class OrderRepo extends BaseRepository implements IOrderRepo
         $order->save();
         return $order;
     }
+
 
     public function delete($id)
     {

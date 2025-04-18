@@ -75,40 +75,40 @@ class OrderService implements IServiceOrder
     }
 
     public function getAll($req)
-{
-    $orders = $this->orderRepo->getAll($req);
+    {
+        $orders = $this->orderRepo->getAll($req);
 
-    foreach ($orders as $order) {
-        // Lấy chi tiết sản phẩm
-        $details = $this->detailOrderRepo->getAll(['order_id' => $order->id]);
+        foreach ($orders as $order) {
+            // Lấy chi tiết sản phẩm
+            $details = $this->detailOrderRepo->getAll(['order_id' => $order->id]);
 
-        $productNames = [];
-        $totalQuantity = 0;
+            $productNames = [];
+            $totalQuantity = 0;
 
-        foreach ($details as $detail) {
-            $product = $this->productRepo->findById($detail->product_id);
-            if ($product) {
-                $productNames[] = $product->name;
+            foreach ($details as $detail) {
+                $product = $this->productRepo->findById($detail->product_id);
+                if ($product) {
+                    $productNames[] = $product->name;
+                }
+                $totalQuantity += $detail->quantity; // 👉 cộng dồn số lượng
             }
-            $totalQuantity += $detail->quantity; // 👉 cộng dồn số lượng
+
+            $order->product_names = $productNames;
+            $order->total_quantity = $totalQuantity; // 👈 gán số lượng vào order
+
+            // Thêm thông tin khách
+            $user = $this->userRepo->findById($order->user_id);
+            if ($user) {
+                $order->customer_info = [
+                    'name' => $user->name,
+                    'phone' => $user->phone,
+                    'address' => $user->address,
+                ];
+            }
         }
 
-        $order->product_names = $productNames;
-        $order->total_quantity = $totalQuantity; // 👈 gán số lượng vào order
-
-        // Thêm thông tin khách
-        $user = $this->userRepo->findById($order->user_id);
-        if ($user) {
-            $order->customer_info = [
-                'name' => $user->name,
-                'phone' => $user->phone,
-                'address' => $user->address,
-            ];
-        }
+        return $orders;
     }
-
-    return $orders;
-}
 
 
 
@@ -126,11 +126,14 @@ class OrderService implements IServiceOrder
             $vat = $totalPrice * 0.05;
             $shippingFee = 50000;
             $finalTotal = $totalPrice + $vat + $shippingFee;
-
+            $user = $this->userRepo->findById($data['user_id']);
             $data['total_price'] = $totalPrice;
             $data['vat'] = $vat;
             $data['shipping_fee'] = $shippingFee;
             $data['final_total'] = $finalTotal;
+            $data['receiver_name'] = $data['receiver_name'] ?? $user->name;
+            $data['receiver_phone'] = $data['receiver_phone'] ?? $user->phone;
+            $data['receiver_address'] = $data['receiver_address'] ?? $user->address;
 
             $rs = $this->orderRepo->create($data);
             if ($rs == null) {
@@ -138,7 +141,7 @@ class OrderService implements IServiceOrder
             }
 
             $this->syncData($dataCart, $rs->id);
-            $user = $this->userRepo->findById($data['user_id']);
+
             Mail::to($user->email)->queue(new OrderNotifi($rs->order_code, $user->name,  $rs->total_price, Carbon::now()->addDays(3)));
             return $rs;
         });
@@ -153,24 +156,36 @@ class OrderService implements IServiceOrder
     }
 
     public function update($id, $data)
-{
-    $order = $this->findById($id);
+    {
+        $order = $this->findById($id);
 
-    if (array_key_exists('is_paid', $data)) {
-        $order->is_paid = $data['is_paid'];
+        if (array_key_exists('is_paid', $data)) {
+            $order->is_paid = $data['is_paid'];
+        }
+
+        if (array_key_exists('is_canceled', $data)) {
+            $order->is_canceled = $data['is_canceled'];
+        }
+
+        if (array_key_exists('status', $data)) {
+            $order->status = $data['status'];
+        }
+        if (array_key_exists('receiver_name', $data)) {
+            $order->receiver_name = $data['receiver_name'];
+        }
+
+        if (array_key_exists('receiver_phone', $data)) {
+            $order->receiver_phone = $data['receiver_phone'];
+        }
+
+        if (array_key_exists('receiver_address', $data)) {
+            $order->receiver_address = $data['receiver_address'];
+        }
+
+        $order->save();
+        return $order;
     }
 
-    if (array_key_exists('is_canceled', $data)) {
-        $order->is_canceled = $data['is_canceled'];
-    }
-
-    if (array_key_exists('status', $data)) {
-        $order->status = $data['status'];
-    }
-
-    $order->save();
-    return $order;
-}
 
 
 

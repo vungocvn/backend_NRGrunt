@@ -8,4 +8,6 @@ interface IServiceProduct extends ServiceInterfaceService
 {
     public function changeStatus($id);
     public function managerAllProducts($reqParam);
+    public function getTotalSold($productId);
+
 }

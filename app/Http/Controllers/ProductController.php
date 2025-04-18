@@ -33,16 +33,13 @@ class ProductController extends Controller
 
         $data = $this->getDataPaginate($dataPage);
 
-        if (!empty($data)) {
-            return $this->returnJson($data, 200, "success!");
-        } else {
-            throw new APIException(500, "failure!");
+        // ✅ Gán thêm số lượng đã bán cho từng sản phẩm
+        foreach ($data['items'] as &$item) {
+            $item['sold_quantity'] = $this->productSV->getTotalSold($item['id']);
         }
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+        return $this->returnJson($data, 200, "success!");
+    }
     public function create(ProductReq $request)
     {
         $this->authorizeRole(['Admin', 'Admin']);

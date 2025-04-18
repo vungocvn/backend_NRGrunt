@@ -22,6 +22,9 @@ class Order extends Model
         'cart_ids',
         'is_paid',
         'is_canceled',
+        'receiver_name',
+        'receiver_phone',
+        'receiver_address',
     ];
     public function orderDetails()
     {

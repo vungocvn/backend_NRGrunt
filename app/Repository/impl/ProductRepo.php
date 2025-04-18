@@ -84,4 +84,11 @@ class ProductRepo extends BaseRepository implements IProductRepo
         $product->save();
         return $product;
     }
+    public function getTotalSold($productId)
+{
+    return \DB::table('detail_orders')
+        ->where('product_id', $productId)
+        ->sum('quantity');
+}
+
 }

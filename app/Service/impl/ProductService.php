@@ -16,14 +16,27 @@ class ProductService implements IServiceProduct
     public function managerAllProducts($reqParam)
     {
         $reqParam['page_size']  = $reqParam['page_size'] ?? 2;
-        return $this->productRepo->managerAllProducts($reqParam);
+        $result = $this->productRepo->managerAllProducts($reqParam);
+
+        foreach ($result->items() as $item) {
+            $item->sold_quantity = $this->productRepo->getTotalSold($item->id);
+        }
+
+        return $result;
     }
 
     public function getAll($reqParam)
     {
         $reqParam['page_size']  = $reqParam['page_size'] ?? 2;
-        return $this->productRepo->getAll($reqParam);
+        $result = $this->productRepo->getAll($reqParam);
+
+        foreach ($result->items() as $item) {
+            $item->sold_quantity = $this->productRepo->getTotalSold($item->id);
+        }
+
+        return $result;
     }
+
 
     public function changeStatus($id)
     {
@@ -52,6 +65,9 @@ class ProductService implements IServiceProduct
     {
         return $this->productRepo->delete($id);
     }
+    public function getTotalSold($productId)
+{
+    return $this->productRepo->getTotalSold($productId);
+}
 
-    
 }

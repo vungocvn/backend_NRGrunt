@@ -28,15 +28,11 @@ class OrderReq extends FormRequest
             'shipping_fee'   => 'required|numeric',
             'final_total'    => 'required|numeric',
 
-            'phone'          => 'nullable|string|max:20',
-            'address'        => 'nullable|string|max:255',
-            'name'           => 'nullable|string|max:100',
+            'receiver_name'    => 'required|string|max:100',
+            'receiver_phone'   => 'required|string|max:20',
+            'receiver_address' => 'required|string|max:255',
         ];
     }
-
-    /**
-     * Tùy chỉnh thông báo lỗi
-     */
     public function messages()
     {
         return [
@@ -50,21 +46,18 @@ class OrderReq extends FormRequest
             'final_total.required'  => 'Thiếu tổng thanh toán!',
         ];
     }
-
-    /**
-     * Đổi tên các field để hiển thị tiếng Việt
-     */
     public function attributes()
     {
         return [
-            'cart_ids'     => 'Danh sách giỏ hàng',
-            'total_price'  => 'Tổng tiền',
-            'vat'          => 'VAT',
-            'shipping_fee' => 'Phí vận chuyển',
-            'final_total'  => 'Thành tiền',
-            'phone'        => 'Số điện thoại',
-            'address'      => 'Địa chỉ',
-            'name'         => 'Họ tên',
+            'cart_ids'        => 'Danh sách giỏ hàng',
+            'total_price'     => 'Tổng tiền',
+            'vat'             => 'VAT',
+            'shipping_fee'    => 'Phí vận chuyển',
+            'final_total'     => 'Thành tiền',
+            'receiver_name'   => 'Tên người nhận',
+            'receiver_phone'  => 'Số điện thoại người nhận',
+            'receiver_address'=> 'Địa chỉ người nhận',
         ];
     }
+
 }
