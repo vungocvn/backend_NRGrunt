@@ -124,7 +124,7 @@ class ProductController extends Controller
 
         // Kiểm tra nếu thư mục chưa có thì tạo
         if (!File::exists($directory)) {
-            File::makeDirectory($directory, 0777, true); // 0777 là quyền truy cập cho thư mục
+            File::makeDirectory($directory, 0777, true);
         }
 
         // Lấy ảnh từ request và tạo tên ảnh ngẫu nhiên
