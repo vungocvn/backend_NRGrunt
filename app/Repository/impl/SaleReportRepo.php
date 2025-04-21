@@ -11,8 +11,12 @@ class SaleReportRepo extends BaseRepository implements ISaleReportRepo
 {
     public function getAll($reqParam)
     {
-        $revenue = Order::sum('total_price');
-        $orderCount = Order::count();
+        $orders = Order::where('is_canceled', 0)
+                       ->where('is_paid', 1)
+                       ->get();
+
+        $revenue = $orders->sum('final_total'); 
+        $orderCount = $orders->count();
 
         return response()->json([
             'status' => 200,
@@ -20,6 +24,7 @@ class SaleReportRepo extends BaseRepository implements ISaleReportRepo
             'total_orders' => $orderCount
         ]);
     }
+
 
     public function findById($id) {}
 
