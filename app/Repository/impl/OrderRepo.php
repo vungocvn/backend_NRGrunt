@@ -32,6 +32,9 @@ class OrderRepo extends BaseRepository implements IOrderRepo
         if (isset($req['is_canceled'])) {
             $query->where('is_canceled', $req['is_canceled']);
         }
+        if (isset($req['is_confirmed'])) {
+            $query->where('is_confirmed', $req['is_confirmed']);
+        }
 
         return $query->orderBy('created_at', 'desc')->get();
     }

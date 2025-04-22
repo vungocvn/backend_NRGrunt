@@ -47,7 +47,7 @@ Route::middleware(['api'])->group(function () {
         Route::post('/', [App\Http\Controllers\OrderController::class, 'create']);
         Route::delete('/{id}', [App\Http\Controllers\OrderController::class, 'destroy']);
         Route::put('/{id}', [App\Http\Controllers\OrderController::class, 'update']);
-
+        Route::post('/{id}/cancel', [App\Http\Controllers\OrderController::class, 'cancel']);
     });
 
     Route::prefix('posts')->group(function () {

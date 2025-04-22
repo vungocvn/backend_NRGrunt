@@ -14,7 +14,6 @@ class Order extends Model
     protected $fillable = [
         'user_id',
         'order_code',
-        'status',
         'total_price',
         'vat',
         'shipping_fee',
@@ -22,10 +21,12 @@ class Order extends Model
         'cart_ids',
         'is_paid',
         'is_canceled',
+        'is_confirmed',
         'receiver_name',
         'receiver_phone',
         'receiver_address',
     ];
+
     public function orderDetails()
     {
         return $this->hasMany(DetailOrder::class, 'order_id');

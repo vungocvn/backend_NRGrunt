@@ -6,6 +6,7 @@ use App\Http\Requests\OrderReq;
 use App\Service\extend\IServiceOrder;
 use Illuminate\Http\Request;
 use App\Models\Order;
+
 class OrderController extends Controller
 {
     private $orderService;
@@ -86,5 +87,26 @@ class OrderController extends Controller
             'status' => 200,
             'data' => $orders,
         ]);
+    }
+    public function cancel($id)
+    {
+        $user = $this->getAuth(); // Dùng hệ thống xác thực đã có sẵn
+
+        $order = Order::where('id', $id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if (!$order) {
+            return $this->returnJson(null, 404, 'Không tìm thấy đơn hàng hoặc không có quyền huỷ');
+        }
+
+        if ($order->is_canceled) {
+            return $this->returnJson(null, 400, 'Đơn hàng đã bị huỷ trước đó');
+        }
+
+        $order->is_canceled = 1;
+        $order->save();
+
+        return $this->returnJson($order, 200, 'Huỷ đơn hàng thành công');
     }
 }

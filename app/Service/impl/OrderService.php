@@ -166,7 +166,9 @@ class OrderService implements IServiceOrder
         if (array_key_exists('is_canceled', $data)) {
             $order->is_canceled = $data['is_canceled'];
         }
-
+        if (array_key_exists('is_confirmed', $data)) {
+            $order->is_confirmed = $data['is_confirmed'];
+        }
         if (array_key_exists('status', $data)) {
             $order->status = $data['status'];
         }
@@ -181,6 +183,8 @@ class OrderService implements IServiceOrder
         if (array_key_exists('receiver_address', $data)) {
             $order->receiver_address = $data['receiver_address'];
         }
+
+
 
         $order->save();
         return $order;
