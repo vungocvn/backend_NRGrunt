@@ -42,13 +42,18 @@ class UserRepo implements IUserRepo
     public function changeRole($id, $roleId)
     {
         $user = $this->findById($id);
-        RoleUser::where('user_id', $user->id)->update(['role_id' => $roleId]);
+
+        $user->load('roles'); // 👈 tránh lỗi quan hệ chưa sẵn sàng
+
+        $user->roles()->sync([$roleId]);
 
         if ($roleId === 2) {
             $this->activeUser($user->hash_code);
         }
-        return Role::find($roleId);
+
+        return $user->load('roles');
     }
+
 
     public function changeStatus($id, $valueStatus)
     {
@@ -65,10 +70,10 @@ class UserRepo implements IUserRepo
     {
         return User::join('role_users', 'role_users.user_id', '=', 'users.id')
             ->join('roles', 'roles.id', '=', 'role_users.role_id')
-            ->where('roles.name', '!=', 'Admin')
             ->select('users.*', 'roles.name as role')
             ->get();
     }
+
 
     public function findById($id)
     {

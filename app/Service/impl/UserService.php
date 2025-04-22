@@ -19,22 +19,17 @@ class UserService implements IServiceUser
         return $this->userRepo->findByHash($hash);
     }
 
-    public function changeRole($id, $role)
+    public function changeRole($id, $roleName)
     {
-        $roleId =  3;
-        switch ($role) {
-            case 'Admin':
-                $roleId = 2;
-                break;
-            case 'Customer':
-                $roleId = 3;
-                break;
-            default:
-                throw new APIException(400, "Role not valid!");
-                break;
+        $role = \App\Models\Role::where('name', $roleName)->first();
+
+        if (!$role) {
+            throw new APIException(400, "Vai trò không hợp lệ!");
         }
-        return $this->userRepo->changeRole($id, $roleId);
+
+        return $this->userRepo->changeRole($id, $role->id);
     }
+
 
     public function changeStatus($id, $status)
     {
