@@ -115,7 +115,11 @@ Route::middleware(['api'])->group(function () {
             Route::put('/{id}/status', [App\Http\Controllers\UserController::class, 'changeStatus']);
         });
     });
-    // routes/api.php
     Route::post('/client/forgot-password', [ClientController::class, 'forgotPassword']);
     Route::post('/client/reset-password', [ClientController::class, 'resetPassword']);
+    Route::get('/products/{id}/reviews', [App\Http\Controllers\ReviewController::class, 'getByProduct']);
+    Route::prefix('reviews')->group(function () {
+    Route::post('/', [App\Http\Controllers\ReviewController::class, 'store']);
+    });
+    Route::get('/orders/{id}', [App\Http\Controllers\OrderController::class, 'getById']);
 });

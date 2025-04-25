@@ -37,10 +37,6 @@ class CartController extends Controller
         $req->merge(['user_id' => $user->id]);
         return $this->returnJson($this->cartSV->create($req->all()), 200, "success!");
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function getById($id)
     {
         $user = $this->getAuth();
@@ -52,20 +48,12 @@ class CartController extends Controller
 
         return $this->returnJson($dataCart, 200, "success!");
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update($id, CartReq $request)
     {
         $user = $this->getAuth();
         $this->cartSV->managerOwnCart($id, $user->id);
         return $this->returnJson($this->cartSV->update($id, $request->all()), 200, "success!");
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
         $user = $this->getAuth();
