@@ -8,7 +8,6 @@ use App\Models\Order;
 
 class ReviewController extends Controller
 {
-    // ✅ Gửi đánh giá sản phẩm
     public function store(Request $request)
     {
         $user = auth()->user();
@@ -18,31 +17,29 @@ class ReviewController extends Controller
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'nullable|string|max:1000',
         ]);
-
-        // Kiểm tra đã từng đánh giá sản phẩm này chưa
         $existing = Review::where('user_id', $user->id)
-                          ->where('product_id', $validated['product_id'])
-                          ->first();
+            ->where('product_id', $validated['product_id'])
+            ->first();
 
         if ($existing) {
             return response()->json(['message' => 'Bạn đã đánh giá sản phẩm này rồi.'], 409);
         }
 
-        // ✅ Kiểm tra đã mua và đơn đã hoàn thành chưa
         $hasPurchased = Order::where('user_id', $user->id)
-            ->where('status', 'completed') // status phải là "completed" hoặc tên bạn dùng cho đơn đã xong
+            ->where('is_paid', 1)
+            ->where('is_confirmed', 1)
+            ->where('is_canceled', 0)
             ->whereHas('orderDetails', function ($q) use ($validated) {
                 $q->where('product_id', $validated['product_id']);
             })
             ->exists();
+
 
         if (!$hasPurchased) {
             return response()->json([
                 'message' => 'Bạn chỉ có thể đánh giá sau khi đã mua và hoàn thành đơn hàng.'
             ], 403);
         }
-
-        // ✅ Lưu đánh giá
         $review = Review::create([
             'user_id' => $user->id,
             'product_id' => $validated['product_id'],
@@ -55,8 +52,6 @@ class ReviewController extends Controller
             'review' => $review
         ]);
     }
-
-    // ✅ Lấy danh sách đánh giá theo sản phẩm
     public function getByProduct($productId)
     {
         $reviews = Review::with('user:id,name')

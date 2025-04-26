@@ -8,6 +8,7 @@ use App\Service\extend\IServiceProduct as ExtendIServiceProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
+use App\Models\Review;
 
 class ProductController extends Controller
 {
@@ -17,9 +18,6 @@ class ProductController extends Controller
     {
         $this->productSV = $productSV;
     }
-    /**
-     * Display a listing of the resource.
-     */
     public function getAll(Request $request)
     {
         $requestParam = $request->query();
@@ -30,16 +28,27 @@ class ProductController extends Controller
         } else {
             $dataPage = $this->productSV->getAll($requestParam);
         }
-
         $data = $this->getDataPaginate($dataPage);
+        $productIds = array_column($data['items'], 'id');
 
-        // ✅ Gán thêm số lượng đã bán cho từng sản phẩm
+        $ratings = \App\Models\Review::selectRaw('product_id, AVG(rating) as avg_rating, COUNT(*) as rating_count')
+            ->whereIn('product_id', $productIds)
+            ->groupBy('product_id')
+            ->get()
+            ->keyBy('product_id');
         foreach ($data['items'] as &$item) {
+            if (!isset($item['id'])) continue;
+
             $item['sold_quantity'] = $this->productSV->getTotalSold($item['id']);
+
+            $rating = $ratings[$item['id']] ?? null;
+            $item['avg_rating'] = $rating ? round($rating->avg_rating, 1) : 0;
+            $item['rating_count'] = $rating->rating_count ?? 0;
         }
 
         return $this->returnJson($data, 200, "success!");
     }
+
     public function create(ProductReq $request)
     {
         $this->authorizeRole(['Admin', 'Admin']);
@@ -63,19 +72,17 @@ class ProductController extends Controller
             ], 500);
         }
     }
-
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function getById($id)
     {
         $data = $this->productSV->findById($id);
 
+        $data = $this->productSV->findById($id);
+
         if (!empty($data)) {
+            $data['avg_rating'] = round(Review::where('product_id', $id)->avg('rating') ?? 0, 1);
+            $data['rating_count'] = Review::where('product_id', $id)->count();
+
             return $this->returnJson($data, 200, "success!");
-        } else {
-            throw new APIException(500, "failure!");
         }
     }
 
@@ -91,10 +98,6 @@ class ProductController extends Controller
             throw new APIException(500, "failure!");
         }
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
         $this->authorizeRole(['Admin', 'Admin']);
@@ -143,5 +146,4 @@ class ProductController extends Controller
             'filePath' => $imageUrl
         ]);
     }
-
 }

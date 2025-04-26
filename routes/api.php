@@ -121,5 +121,6 @@ Route::middleware(['api'])->group(function () {
     Route::prefix('reviews')->group(function () {
     Route::post('/', [App\Http\Controllers\ReviewController::class, 'store']);
     });
+    Route::get('/reviews/{productId}', [App\Http\Controllers\ReviewController::class, 'getByProduct']);
     Route::get('/orders/{id}', [App\Http\Controllers\OrderController::class, 'getById']);
 });
