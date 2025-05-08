@@ -12,10 +12,17 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->unsignedTinyInteger('rating');
+            $table->unsignedTinyInteger('rating')->default(1);
             $table->text('comment')->nullable();
             $table->timestamps();
+            $table->index('user_id');
+            $table->index('product_id');
         });
     }
 
+    public function down(): void
+    {
+        Schema::dropIfExists('reviews');
+    }
 };
+

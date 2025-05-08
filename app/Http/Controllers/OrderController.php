@@ -17,19 +17,22 @@ class OrderController extends Controller
         $this->orderService = $orderService;
     }
 
+    // Lấy chi tiết đơn hàng theo ID
     public function getById($id)
     {
         $user = $this->getAuth();
 
+        // Kiểm tra xem người dùng có quyền truy cập đơn hàng này không
         $order = Order::with(['orderDetails.product', 'user'])
             ->where('id', $id)
             ->where('user_id', $user->id)
-            ->firstOrFail();
+            ->firstOrFail(); // Nếu không tìm thấy, trả về lỗi 404
 
+        // Lấy chi tiết đơn hàng và kiểm tra xem sản phẩm đã được đánh giá hay chưa
         $products = $order->orderDetails->map(function ($detail) use ($user) {
             $hasReviewed = Review::where('user_id', $user->id)
                 ->where('product_id', $detail->product_id)
-                ->exists();
+                ->exists(); // Kiểm tra xem người dùng đã đánh giá sản phẩm chưa
 
             return [
                 'id' => $detail->id,
@@ -38,7 +41,7 @@ class OrderController extends Controller
                 'quantity' => $detail->quantity,
                 'unit_price' => $detail->unit_price,
                 'image' => $detail->product->image ?? null,
-                'is_reviewed' => $hasReviewed,
+                'is_reviewed' => $hasReviewed, // Trạng thái đã đánh giá hay chưa
             ];
         });
 
@@ -58,17 +61,21 @@ class OrderController extends Controller
         ]);
     }
 
-
+    // Lấy tất cả đơn hàng (Admin hoặc của người dùng)
     public function getAll(Request $request)
     {
         $user = $this->getAuth();
-        if ($this->hasRole(['Admin', 'Admin'])) {
+
+        // Kiểm tra vai trò người dùng
+        if ($this->hasRole(['Admin'])) {
             return $this->returnJson($this->orderService->getAll($request->all()), 200, "success!");
         }
 
+        // Trả về các đơn hàng của người dùng
         return $this->returnJson($this->orderService->ownOrders($user->id), 200, "success!");
     }
 
+    // Tạo đơn hàng mới
     public function create(OrderReq $request)
     {
         $user = $this->getAuth();
@@ -77,6 +84,7 @@ class OrderController extends Controller
         return $this->returnJson($this->orderService->create($data), 201, "created successfully!");
     }
 
+    // Cập nhật trạng thái đơn hàng
     public function update(Request $request, $id)
     {
         $user = $this->getAuth();
@@ -85,12 +93,14 @@ class OrderController extends Controller
         return $this->returnJson($this->orderService->update($id, $data), 200, "change status successfully!");
     }
 
+    // Xóa đơn hàng (Admin chỉ có quyền)
     public function destroy(int $id)
     {
-        $this->authorizeRole(['Admin', 'Admin']);
+        $this->authorizeRole(['Admin']); // Kiểm tra quyền admin
         return $this->returnJson($this->orderService->delete($id), 204, "success!");
     }
 
+    // Lấy tất cả đơn hàng của người dùng
     public function getMyOrders(Request $request)
     {
         $user = $this->getAuth();
@@ -106,6 +116,7 @@ class OrderController extends Controller
         ]);
     }
 
+    // Huỷ đơn hàng
     public function cancel($id)
     {
         $user = $this->getAuth();
@@ -127,4 +138,23 @@ class OrderController extends Controller
 
         return $this->returnJson($order, 200, 'Huỷ đơn hàng thành công');
     }
+
+    public function checkReviewed($id)
+    {
+        $user = auth()->user();
+
+        $order = Order::where('id', $id)->where('user_id', $user->id)->first();
+
+        if (!$order) {
+            return response()->json(['message' => 'Bạn không có quyền truy cập đơn hàng này.'], 403);
+        }
+
+        $hasReviewed = Review::where('user_id', $user->id)
+            ->where('product_id', $order->product_id)
+            ->exists();
+
+        return response()->json(['has_reviewed' => $hasReviewed]);
+    }
+
+
 }

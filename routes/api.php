@@ -123,4 +123,6 @@ Route::middleware(['api'])->group(function () {
     });
     Route::get('/reviews/{productId}', [App\Http\Controllers\ReviewController::class, 'getByProduct']);
     Route::get('/orders/{id}', [App\Http\Controllers\OrderController::class, 'getById']);
+    Route::get('/orders/{id}/has-reviewed', [App\Http\Controllers\OrderController::class, 'checkReviewed']);
+
 });

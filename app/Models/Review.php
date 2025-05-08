@@ -9,16 +9,21 @@ class Review extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'product_id', 'rating', 'comment'];
+    protected $fillable = [
+        'user_id', 'product_id', 'rating', 'comment'
+    ];
 
+    // Mối quan hệ với bảng users
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
+    // Mối quan hệ với bảng products
     public function product()
     {
         return $this->belongsTo(Product::class);
     }
 }
+
 
